@@ -11,6 +11,7 @@ const getEnv=(key:string):string=>{
 }
 
 const MONGO_URL=getEnv("MONGO_URL");
+export const JWT_SECRET=getEnv("JWT_SECRET");   
 
 mongoose.connect(MONGO_URL)
 .then(()=>{

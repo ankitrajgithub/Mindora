@@ -2,7 +2,7 @@ import express from "express";
 import "dotenv/config";
 import { random } from "./utils.js";
 import jwt from "jsonwebtoken";
-import { ContentModel, LinkModel, UserModel } from "./db.js";
+import { ContentModel, LinkModel, UserModel, JWT_SECRET} from "./db.js";
 import { userMiddleware } from "./middleware.js";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -50,7 +50,7 @@ app.post("/api/v1/signin", async (req, res) => {
     if (existingUser) {
         const token = jwt.sign({
             id: existingUser._id
-        }, process.env.JWT_SECRET!)
+        }, JWT_SECRET)
 
         res.json({
             token
@@ -65,11 +65,13 @@ app.post("/api/v1/signin", async (req, res) => {
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
     const link:string = req.body.link;
     const type:string = req.body.type;
+    const title=req.body.title;
+    const userId= new mongoose.Types.ObjectId(req.userId as string);
     await ContentModel.create({
         link,
         type,
-        title: req.body.title,
-        userId: new mongoose.Types.ObjectId(req.userId as string),
+        title,
+        userId,
         tags: []
     })
 
